@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gym Membership Management System
 
-## Getting Started
+## Project Overview
+A web-based application for managing gym operations, including members, membership plans, trainers, attendance, payments and reports.
 
-First, run the development server:
+## Technology Stack
+- Frontend: Next.js, React, TypeScript, Tailwind CSS
+- Backend: Next.js API Routes
+- Database: MySQL
+- Additional Database: MongoDB
+- Authentication: bcryptjs and JWT using HTTP-only cookies
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Main Features
+- Member registration and login
+- Admin authentication
+- Member management
+- Membership plan management
+- Trainer management and assignment
+- Attendance tracking
+- Payment management
+- Reports and analytics
+- Member dashboard
+- Activity logging
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database
+MySQL database: gym_membership_db
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Main tables:
+- Member
+- Membership_Plan
+- Membership
+- Trainer
+- Trainer_Assignment
+- Attendance
+- Payment
+- auth_users
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+SQL scripts are included in this repository.
 
-## Learn More
+## Team Contributions
 
-To learn more about Next.js, take a look at the following resources:
+### Member 1
+- Designed and implemented the MySQL database schema.
+- Added sample data, SQL operations and indexing.
+- Implemented the membership reporting view.
+- Integrated the frontend developed by Member 2 with the backend and database.
+- Implemented authentication, login and registration.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Member 2
+- Designed and developed the frontend interface.
+- Worked on MongoDB integration and activity logging.
+- Contributed to application modules and project integration.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Setup
 
-## Deploy on Vercel
+1. Clone the repository:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   git clone https://github.com/priyankabm11/Gym-Membership-Management-System.git
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Enter the project directory:
+
+   cd Gym-Membership-Management-System
+
+3. Install dependencies:
+
+   npm install
+
+4. Configure your environment variables in a local .env.local file.
+
+5. Start the development server:
+
+   npm run dev
+
+6. Open http://localhost:3000
+
