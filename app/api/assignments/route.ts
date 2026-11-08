@@ -25,6 +25,7 @@ export async function GET() {
     return NextResponse.json(rows);
   } catch (error) {
     console.error("Fetch assignments error:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch trainer assignments." },
       { status: 500 }
@@ -45,13 +46,15 @@ export async function POST(request: Request) {
     const endDate = body.end_date || null;
 
     if (
-      !Number.isInteger(trainerId) || trainerId <= 0 ||
-      !Number.isInteger(memberId) || memberId <= 0 ||
+      !Number.isInteger(trainerId) ||
+      trainerId <= 0 ||
+      !Number.isInteger(memberId) ||
+      memberId <= 0 ||
       typeof assignedDate !== "string" ||
       !/^\d{4}-\d{2}-\d{2}$/.test(assignedDate) ||
       (endDate !== null &&
         (typeof endDate !== "string" ||
-         !/^\d{4}-\d{2}-\d{2}$/.test(endDate)))
+          !/^\d{4}-\d{2}-\d{2}$/.test(endDate)))
     ) {
       return NextResponse.json(
         { error: "Please provide valid trainer, member, and date details." },
@@ -77,18 +80,25 @@ export async function POST(request: Request) {
       { message: "Trainer assigned successfully." },
       { status: 201 }
     );
-
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Create assignment error:", error);
 
-    if (error.code === "ER_NO_REFERENCED_ROW_2") {
+    const errorCode =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string"
+        ? error.code
+        : undefined;
+
+    if (errorCode === "ER_NO_REFERENCED_ROW_2") {
       return NextResponse.json(
         { error: "The selected trainer or member does not exist." },
         { status: 400 }
       );
     }
 
-    if (error.code === "ER_DUP_ENTRY") {
+    if (errorCode === "ER_DUP_ENTRY") {
       return NextResponse.json(
         { error: "This trainer assignment already exists for that date." },
         { status: 409 }

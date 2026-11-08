@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 
 type Member = {
   member_id: number;
@@ -31,11 +32,9 @@ export default function AttendancePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  async function loadData() {
-    try {
-      setLoading(true);
-
-      const [attendanceResponse, membersResponse] = await Promise.all([
+  const loadData = useCallback(async () => {
+  try {
+    const [attendanceResponse, membersResponse] = await Promise.all([
         fetch("/api/attendance"),
         fetch("/api/members"),
       ]);
@@ -78,11 +77,11 @@ export default function AttendancePage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    loadData();
-  }, []);
+     void Promise.resolve().then(() => loadData());
+  }, [loadData]);
 
   async function recordAttendance() {
     if (!memberId || !date || !checkIn) {
@@ -145,12 +144,12 @@ export default function AttendancePage() {
   return (
     <main className="min-h-screen bg-slate-100 p-5 text-slate-900 md:p-9">
       <div className="mx-auto max-w-7xl">
-        <a
+        <Link
           href="/"
           className="text-sm font-medium text-emerald-700 hover:underline"
         >
           ← Back to Dashboard
-        </a>
+        </Link>
 
         <header className="mt-5">
           <p className="text-sm text-slate-500">

@@ -82,19 +82,30 @@ export async function POST(request: Request) {
       { message: "Trainer assigned successfully." },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Create trainer assignment error:", error);
 
-    if (error.code === "ER_NO_REFERENCED_ROW_2") {
+    const errorCode =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string"
+        ? error.code
+        : undefined;
+
+    if (errorCode === "ER_NO_REFERENCED_ROW_2") {
       return NextResponse.json(
         { error: "The selected trainer or member does not exist." },
         { status: 400 }
       );
     }
 
-    if (error.code === "ER_DUP_ENTRY") {
+    if (errorCode === "ER_DUP_ENTRY") {
       return NextResponse.json(
-        { error: "This trainer is already assigned to this member on that date." },
+        {
+          error:
+            "This trainer is already assigned to this member on that date.",
+        },
         { status: 409 }
       );
     }
