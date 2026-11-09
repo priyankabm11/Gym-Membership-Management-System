@@ -1,6 +1,8 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Trainer = {
   id: number;
@@ -18,7 +20,7 @@ type MemberOption = {
 };
 
 type Assignment = {
-  id: number;
+  id: string;
   trainerId: number;
   memberId: number;
   trainer: string;
@@ -47,7 +49,6 @@ export default function TrainersPage() {
   const [assignmentLoading, setAssignmentLoading] = useState(true);
   const [assignmentSaving, setAssignmentSaving] = useState(false);
 
-  // Load trainers from MySQL
   async function loadTrainers() {
     try {
       setLoading(true);
@@ -98,7 +99,6 @@ export default function TrainersPage() {
     }
   }
 
-  // Load members from MySQL
   async function loadMembers() {
     try {
       const response = await fetch("/api/members");
@@ -128,7 +128,6 @@ export default function TrainersPage() {
     }
   }
 
-  // Load trainer assignments from MySQL
   async function loadAssignments() {
     try {
       setAssignmentLoading(true);
@@ -142,7 +141,6 @@ export default function TrainersPage() {
 
       const formattedAssignments: Assignment[] = data.map(
         (item: {
-          assignment_id: number;
           trainer_id: number;
           trainer: string;
           member_id: number;
@@ -150,7 +148,7 @@ export default function TrainersPage() {
           assigned_date: string;
           end_date: string | null;
         }) => ({
-          id: item.assignment_id,
+          id: `${item.trainer_id}-${item.member_id}-${item.assigned_date}`,
           trainerId: item.trainer_id,
           memberId: item.member_id,
           trainer: item.trainer,
@@ -171,14 +169,18 @@ export default function TrainersPage() {
     }
   }
 
-  // Load all data when the page opens
   useEffect(() => {
-    loadTrainers();
-    loadMembers();
-    loadAssignments();
+    const timer = Promise.resolve().then(() => {
+      loadTrainers();
+      loadMembers();
+      loadAssignments();
+    });
+
+    return () => {
+      void timer;
+    };
   }, []);
 
-  // Add a new trainer
   async function addTrainer() {
     if (!name.trim()) {
       setMessage("Please enter the trainer's name.");
@@ -226,7 +228,6 @@ export default function TrainersPage() {
     }
   }
 
-  // Assign a member to a trainer and save it in MySQL
   async function assignMember() {
     const trainer = trainers.find(
       (item) => item.id.toString() === assignedTrainer
@@ -297,7 +298,6 @@ export default function TrainersPage() {
     }
   }
 
-  // Search trainers by name or specialization
   const filteredTrainers = trainers.filter(
     (trainer) =>
       trainer.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -307,12 +307,12 @@ export default function TrainersPage() {
   return (
     <main className="min-h-screen bg-slate-100 p-5 text-slate-900 md:p-9">
       <div className="mx-auto max-w-7xl">
-        <a
+        <Link
           href="/"
           className="text-sm font-medium text-emerald-700 hover:underline"
         >
           ← Back to Dashboard
-        </a>
+        </Link>
 
         <header className="mt-5">
           <p className="text-sm text-slate-500">
@@ -328,7 +328,6 @@ export default function TrainersPage() {
           </p>
         </header>
 
-        {/* Summary cards */}
         <section className="mt-8 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl bg-white p-6 shadow-sm">
             <p className="text-sm text-slate-500">Total Trainers</p>
@@ -353,7 +352,6 @@ export default function TrainersPage() {
           </div>
         </section>
 
-        {/* Add trainer */}
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="text-xl font-bold">Add a Trainer</h2>
 
@@ -414,7 +412,6 @@ export default function TrainersPage() {
           </button>
         </section>
 
-        {/* Trainer directory */}
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-xl font-bold">Trainer Directory</h2>
@@ -501,7 +498,6 @@ export default function TrainersPage() {
           </div>
         </section>
 
-        {/* Assign member */}
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="text-xl font-bold">
             Assign a Member to a Trainer
@@ -562,7 +558,6 @@ export default function TrainersPage() {
             </p>
           )}
 
-          {/* Current assignments */}
           <h3 className="mt-8 text-lg font-bold">Current Assignments</h3>
 
           <div className="mt-4 overflow-x-auto">

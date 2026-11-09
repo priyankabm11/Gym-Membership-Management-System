@@ -42,13 +42,11 @@ CREATE TABLE IF NOT EXISTS trainer (
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS trainer_assignment (
-    assignment_id INT NOT NULL AUTO_INCREMENT,
     trainer_id INT NOT NULL,
     member_id INT NOT NULL,
     assigned_date DATE NOT NULL,
     end_date DATE DEFAULT NULL,
-    PRIMARY KEY (assignment_id),
-    KEY idx_assignment_trainer (trainer_id),
+    PRIMARY KEY (trainer_id, member_id, assigned_date),
     KEY idx_assignment_member (member_id),
     CONSTRAINT fk_assignment_trainer
         FOREIGN KEY (trainer_id)
@@ -97,8 +95,9 @@ CREATE TABLE IF NOT EXISTS payment (
     membership_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     payment_date DATE NOT NULL,
-    payment_method VARCHAR(30) NOT NULL,
-    payment_status VARCHAR(20) NOT NULL DEFAULT 'Completed',
+    payment_method VARCHAR(50) DEFAULT NULL,
+    payment_status ENUM('Completed','Pending','Failed','Refunded')
+        DEFAULT 'Pending',
     PRIMARY KEY (payment_id),
     KEY idx_payment_membership (membership_id),
     KEY idx_payment_date (payment_date),
@@ -106,16 +105,7 @@ CREATE TABLE IF NOT EXISTS payment (
         FOREIGN KEY (membership_id)
         REFERENCES membership (membership_id),
     CONSTRAINT chk_payment_amount
-        CHECK (amount >= 0),
-    CONSTRAINT chk_payment_status
-        CHECK (
-            payment_status IN (
-                'Pending',
-                'Completed',
-                'Failed',
-                'Refunded'
-            )
-        )
+        CHECK (amount >= 0)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_0900_ai_ci;
